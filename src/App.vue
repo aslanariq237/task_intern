@@ -1,6 +1,14 @@
 <script setup>
+import axios from 'axios';
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+
+const isLoggedIn = localStorage.getItem('isLoggedIn') == "true"
+const username = localStorage.getItem('username') || ""
+
+const logout = () => {
+  localStorage.setItem('idLoggedIn', false);
+  this.$router.push('/login')
+}
 </script>
 
 <template>
@@ -17,7 +25,12 @@ import HelloWorld from './components/HelloWorld.vue'
         </ul>
       </div>
       <div class="left">
-        <div class="logos"></div>
+        <div class="" v-if="isLoggedIn">
+          <div class="logos">{{ username }}</div><button @click="logout()">Logout</button>        
+        </div>
+        <div class="" v-else>          
+          <RouterLink :to="{name: 'login'}"><button>Login</button></RouterLink>
+        </div>
       </div>
     </div>
   </div>
@@ -39,16 +52,15 @@ import HelloWorld from './components/HelloWorld.vue'
   padding: 0;
   justify-content: space-between;
   list-style-type: none;  
+  align-items: center;
   li{
     margin-right: 10px;
     text-decoration: none;    
   }  
 }
-.logos{
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  background-color: rgb(70, 70, 70);
+.left button{
+  background-color: aliceblue;  
+  padding: 5px 12px;  
 }
 .form-input{  
   display: flex;

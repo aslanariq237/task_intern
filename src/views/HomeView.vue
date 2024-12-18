@@ -1,47 +1,49 @@
-<script setup>
+<script>
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
-const users = ref([])
-const error = ref(null)
-const num = ref();
-
-const formData = ref({
-  name: '',
-  price: '',
-  qty: ''
-});
-
-function fibbon(){
-  const fib = parseInt(this.count)
-  return num = fib;
-}
-
-const submitForm = async () => {
-  try {
-    const response = await axios.post('http://localhost:8000/add-product', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',              
-      },
-      body: JSON.stringify(formData.value)
-    })
-    const data = await response.json()
-    console.log('success', data)
-  } catch (error) {
-    console.log(error)    
+export default{
+  data(){
+    return{
+      users : []
+    }
+  },
+  created(){
+    this.getItems()
+  },
+  methods: {
+    async getItems(){
+      try{
+        const response = await axios.get('http://localhost:8000/api/product')
+        this.users = response.data            
+      }catch(err){        
+        console.error(err)
+      }
+    },
+    async deleteItems(id){
+      try {
+        const res = await axios.delete(`http://localhost:8000/api/delete-product/${id}`)
+        if (res) {
+          alert("data berhasil di hapus")
+        }
+      } catch (error) {
+        
+      }
+    },
+    async editItems(id){
+      try{        
+        if (id) {
+          console.log('editing')   
+          this.$router.push(`/edit-product/${id}`)       
+        }
+      }catch(err){
+        console.log(err)
+      }
+    }
   }
 }
 
-onMounted(async() => {
-  try{
-    const response = await axios.get('http://localhost:8000/api/product')
-    users.value = response.data
-  }catch(err){
-    error.value = 'Failed to fetch Data'
-    console.error(err)
-  }
-})
+
 </script>
 
 <template>
@@ -50,13 +52,12 @@ onMounted(async() => {
       <div class="fibbonaci">
         <div class="fib">
           <label for="">Fibbonaci</label>
-          <form @submit.prevent="fibbon">
+          <form >
             <div class="input">
               <input 
                 type="text" 
                 name="fib"                 
-                min="1"
-                v-model="count"
+                min="1"                
                 placeholder="Masukkan Angka yang anda inginkan Max:10">
               <button type="submit">Generate</button>
             </div>
@@ -64,35 +65,14 @@ onMounted(async() => {
         </div>
         
         <div class="result">
-          <p>Result {{ num }}</p>
-        </div>
-      </div>
-      <div class="input">
-        <div class="form-input">
-          <form @submit.prevent="submitForm">
-            <div class="form">
-              <h3 class="title">ADD PRODUCT</h3>
-              <div class="name">
-                <label for="">Name Product</label>
-                <input type="text" name="name" v-model="formData.name" placeholder="masukkan Nama Barang">
-              </div>
-              <div class="price">
-                <label for="">Price Product</label>
-                <input type="text" name="price" v-model="formData.price" placeholder="Masukkan Harga Barang">
-              </div>
-              <div class="qty">
-                <label for="">Quantity</label>
-                <input type="text" name="qty" v-model="formData.qty" placeholder="Masukkan Jumlah">
-              </div>
-              <button type="submit">submit</button>
-            </div>
-          </form>
+          <p>Result : </p>
         </div>
       </div>
     </div>
     <div class="table-data">
       <div class="row">
-        <h1>Table of Product </h1>        
+        <h1>Table of Product </h1> 
+        <RouterLink :to="{name: 'addProduct'}"><button>New Product</button></RouterLink>       
       </div>
       <table>
         <thead>
@@ -111,8 +91,8 @@ onMounted(async() => {
             <td>{{  user.price }}</td>
             <td>{{ user.qty }}</td>
             <td>
-              <button>Edit</button>
-              <button>Delete</button>
+              <button @click="editItems(user.id)">Edit</button>
+              <button @click="deleteItems(user.id)">Delete</button>
             </td>
           </tr>
         </tbody>
