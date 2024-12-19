@@ -6,7 +6,7 @@ const isLoggedIn = localStorage.getItem('isLoggedIn') == "true"
 const username = localStorage.getItem('username') || ""
 
 const logout = () => {
-  localStorage.setItem('idLoggedIn', false);
+  localStorage.setItem('isLoggedIn', false);
   this.$router.push('/login')
 }
 </script>

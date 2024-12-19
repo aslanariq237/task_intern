@@ -5,7 +5,9 @@ import { ref, onMounted } from 'vue';
 export default{
   data(){
     return{
-      users : []
+      users : [],
+      num : 0,
+      result : []
     }
   },
   created(){
@@ -39,7 +41,25 @@ export default{
       }catch(err){
         console.log(err)
       }
-    }
+    },
+    calculateFibonacci() {
+      const n = this.num;
+      if (n < 0) {
+        alert("Please enter a positive number.");
+        return;
+      }
+      const sequence = [];
+      for (let i = 0; i < n; i++) {
+        if (i === 0) {
+          sequence.push(0);
+        } else if (i === 1) {
+          sequence.push(1);
+        } else {
+          sequence.push(sequence[i - 1] + sequence[i - 2]);
+        }
+      }
+      this.result= sequence;
+    },
   }
 }
 
@@ -57,15 +77,15 @@ export default{
               <input 
                 type="text" 
                 name="fib"                 
-                min="1"                
+                min="1"  
+                v-model.number="num"            
                 placeholder="Masukkan Angka yang anda inginkan Max:10">
-              <button type="submit">Generate</button>
+              <button type="button" @click="calculateFibonacci">Generate</button>
             </div>
           </form>
-        </div>
-        
+        </div>        
         <div class="result">
-          <p>Result : </p>
+          <p>Result : {{ result.join(',') }}</p>
         </div>
       </div>
     </div>
@@ -86,7 +106,7 @@ export default{
         </thead>        
         <tbody>
           <tr v-for="user in users" :key="user.id">
-            <td>{{ user.id}}</td>
+            <td>{{ user.unique}}</td>
             <td>{{ user.name }}</td>
             <td>{{  user.price }}</td>
             <td>{{ user.qty }}</td>
